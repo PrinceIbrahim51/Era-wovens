@@ -60,6 +60,11 @@ Demo coupons: `WELCOME10` (10% off retail ≥ ₹2,000, max ₹1,000), `FESTIVE5
 
 **Online payments (optional):** add your Razorpay **test** keys to `.env` (`RAZORPAY_KEY_ID=rzp_test_…`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`), set `RAZORPAY_ENABLED=true`, restart. Point a Razorpay test webhook (`payment.captured`, `order.paid`, `payment.failed`) at `https://<public-host>/api/v1/webhooks/razorpay`. Without keys the storefront shows online payment as unavailable and COD works.
 
+## Hosted catalogue preview (Vercel)
+
+`apps/storefront` is deployed to Vercel as **https://era-wovens.vercel.app** (project `era-wovens`, root directory `apps/storefront`, production branch = this repo's default branch).
+Vercel hosts only the Next.js site, so with no `GATEWAY_URL` configured it runs in **catalogue preview mode**: browsing, filters, search, product pages and the wishlist work from the bundled seed catalogue, and ordering is closed with an "ordering opens soon" message (no carts, orders or payments are simulated). To make ordering live, host the backend (gateway + services + Postgres/Redis/RabbitMQ) somewhere that runs containers, then set `GATEWAY_URL` (and `PUBLIC_APP_URL`, `SECURE_COOKIES=true`) in the Vercel project.
+
 ## Tests
 
 | Suite | Command | Result (this commit) |
