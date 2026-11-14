@@ -1,0 +1,90 @@
+# The gateway is the only public backend entry point. Secrets come from the environment (fail closed).
+server:
+  port: ${GATEWAY_PORT:8080}
+  shutdown: graceful
+  max-http-request-header-size: 16KB
+spring:
+  application.name: api-gateway
+  main.banner-mode: off
+  codec.max-in-memory-size: 256KB
+  data.redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD}
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/api/**]':
+                allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+                allowed-methods: [GET, POST, PATCH, DELETE]
+                allowed-headers: [Content-Type, Idempotency-Key, X-Request-Id]
+                allow-credentials: true
+                max-age: 600
+          default-filters:
+            - name: RequestSize
+              args:
+                maxSize: 512KB
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@clientIpKeyResolver}"
+                redis-rate-limiter.replenishRate: 30
+                redis-rate-limiter.burstCapacity: 60
+          routes:
+            - id: catalog
+              uri: ${CATALOG_SERVICE_URL:http://localhost:8081}
+              predicates: [Path=/api/v1/catalog/**, Method=GET]
+            - id: cart
+              uri: ${CART_SERVICE_URL:http://localhost:8083}
+              predicates: ["Path=/api/v1/cart,/api/v1/cart/**"]
+            - id: checkout
+              uri: ${CHECKOUT_SERVICE_URL:http://localhost:8084}
+              predicates: [Path=/api/v1/checkout/**, Method=POST]
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    key-resolver: "#{@clientIpKeyResolver}"
+                    redis-rate-limiter.replenishRate: 1
+                    redis-rate-limiter.burstCapacity: 10
+            - id: order-lookup
+              uri: ${ORDER_SERVICE_URL:http://localhost:8085}
+              predicates: [Path=/api/v1/orders/lookup, Method=POST]
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    key-resolver: "#{@clientIpKeyResolver}"
+                    redis-rate-limiter.replenishRate: 1
+                    redis-rate-limiter.burstCapacity: 5
+                    redis-rate-limiter.requestedTokens: 1
+            - id: orders
+              uri: ${ORDER_SERVICE_URL:http://localhost:8085}
+              predicates: ["Path=/api/v1/orders/**,/api/v1/me/orders", Method=GET]
+            - id: cod
+              uri: ${COD_SERVICE_URL:http://localhost:8086}
+              predicates: [Path=/api/v1/cod/eligibility, Method=POST]
+            - id: payments
+              uri: ${PAYMENT_SERVICE_URL:http://localhost:8087}
+              predicates: [Path=/api/v1/payments/**]
+              filters:
+                - name: RequestRateLimiter
+                  args:
+                    key-resolver: "#{@clientIpKeyResolver}"
+                    redis-rate-limiter.replenishRate: 1
+                    redis-rate-limiter.burstCapacity: 15
+            - id: razorpay-webhook
+              uri: ${PAYMENT_SERVICE_URL:http://localhost:8087}
+              predicates: [Path=/api/v1/webhooks/razorpay, Method=POST]
+gateway:
+  internal-token: ${GATEWAY_INTERNAL_TOKEN}
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+  secure-cookies: ${SECURE_COOKIES:true}
+  trusted-proxy-hops: ${TRUSTED_PROXY_HOPS:1}
+management:
+  endpoints.web.exposure.include: health
+  endpoint.health:
+    show-details: never
+    probes.enabled: true
+  endpoint.gateway.access: none
+logging.pattern.level: "%5p [%X{requestId:-}]"

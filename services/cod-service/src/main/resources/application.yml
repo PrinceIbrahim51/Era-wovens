@@ -1,0 +1,42 @@
+# All secrets come from the environment / secret manager. Missing values fail startup (fail closed).
+server:
+  port: ${COD_SERVICE_PORT:8086}
+  error:
+    include-stacktrace: never
+    include-message: never
+    whitelabel.enabled: false
+  shutdown: graceful
+spring:
+  application.name: cod-service
+  main.banner-mode: off
+  threads.virtual.enabled: true
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/cod
+    username: ${COD_DB_USER}
+    password: ${COD_DB_PASSWORD}
+    hikari.maximum-pool-size: 10
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  servlet.multipart.enabled: false
+  jackson.default-property-inclusion: non_null
+  mvc.problemdetails.enabled: false
+platform:
+  security:
+    gateway-token: ${GATEWAY_INTERNAL_TOKEN}
+    service-token: ${SERVICE_INTERNAL_TOKEN}
+management:
+  endpoints.web.exposure.include: health
+  endpoint.health:
+    show-details: never
+    probes.enabled: true
+logging.pattern.level: "%5p [%X{requestId:-}]"
+cod:
+  fee-paise: ${COD_FEE_PAISE:4900}
+  max-order-value-paise: ${COD_MAX_ORDER_VALUE_PAISE:2500000}
+  allow-bulk: ${COD_ALLOW_BULK:false}
+  max-pending-orders: 3
+  max-recent-rto: 2
+  rto-lookback: P90D
+  blocked-pincode-prefixes: ${COD_BLOCKED_PINCODE_PREFIXES:}
+  phone-pepper: ${COD_PHONE_PEPPER}

@@ -1,0 +1,13 @@
+# Keep secrets and local state out of every build context.
+.env
+.env.*
+!.env.example
+.git
+.run
+**/node_modules
+**/.next
+**/*.pem
+**/*.key
+services/*/src
+libs
+apps/storefront/test-results

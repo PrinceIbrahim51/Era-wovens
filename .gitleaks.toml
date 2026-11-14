@@ -1,0 +1,6 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fake credentials used only by unit/integration tests"
+paths = ['''services/.*/src/test/.*''']
