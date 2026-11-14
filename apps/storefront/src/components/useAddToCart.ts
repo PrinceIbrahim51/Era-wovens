@@ -2,12 +2,13 @@
 import { useState } from 'react';
 import { api, ApiError } from '@/lib/api';
 import type { Cart, CartType } from '@/lib/types';
-import { useCartSummary, useToast } from './Providers';
+import { useCartSummary, useOrderingOpen, useToast } from './Providers';
 
 export function useAddToCart() {
   const toast = useToast();
   const { refresh } = useCartSummary();
   const [pending, setPending] = useState(false);
+  const open = useOrderingOpen();
 
   async function add(sku: string, quantity: number, cartType: CartType = 'REGULAR'): Promise<Cart | null> {
     setPending(true);
@@ -27,5 +28,5 @@ export function useAddToCart() {
       setPending(false);
     }
   }
-  return { add, pending };
+  return { add, pending, open };
 }

@@ -51,7 +51,7 @@ class OrderServiceIntegrationTest {
         var a = service.create(order(key, "ONLINE"));
         var b = service.create(order(key, "ONLINE"));
         assertThat(a.id()).isEqualTo(b.id());
-        assertThat(a.orderNumber()).matches("^AUR-[0-9]{6}-[A-Z0-9]{6}$");
+        assertThat(a.orderNumber()).matches("^ERA-[0-9]{6}-[A-Z0-9]{6}$");
 
         var tampered = order(UUID.randomUUID().toString(), "ONLINE");
         var bad = new OrderService.CreateOrder(tampered.idempotencyKey(), tampered.ownerHash(), "REGULAR", "ONLINE",

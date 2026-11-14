@@ -32,7 +32,7 @@ public class OrderController {
         this.views = views;
     }
 
-    public record LookupRequest(@NotBlank @Pattern(regexp = "^AUR-[0-9]{6}-[A-Z0-9]{6}$") String orderNumber,
+    public record LookupRequest(@NotBlank @Pattern(regexp = "^ERA-[0-9]{6}-[A-Z0-9]{6}$") String orderNumber,
                                 @NotBlank @Email @Size(max = 254) String email) {}
 
     @GetMapping("/api/v1/orders/{id}")

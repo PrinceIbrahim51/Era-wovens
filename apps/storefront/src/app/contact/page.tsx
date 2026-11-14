@@ -12,7 +12,7 @@ export default function Contact() {
         <li>Phone / WhatsApp: to be added</li>
         <li>Hours: Monday–Saturday, 10:00–18:00 IST</li>
       </ul>
-      <p>For an existing order, please have your order number (e.g. AUR-261114-ABC123) ready. You can also <a href="/track">track your order</a> online.</p>
+      <p>For an existing order, please have your order number (e.g. ERA-261114-ABC123) ready. You can also <a href="/track">track your order</a> online.</p>
     </Prose>
   );
 }

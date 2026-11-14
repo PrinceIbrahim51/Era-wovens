@@ -92,11 +92,11 @@ class PaymentServiceIntegrationTest {
         orderId = UUID.randomUUID();
         rzpOrder = "order_FAKE" + orderId.toString().substring(0, 8).replace("-", "");
         nextOrderId.set(rzpOrder);
-        when(orders.get(orderId)).thenReturn(new OrderClient.InternalOrder(orderId, "AUR-261114-ABCDEF", OWNER,
+        when(orders.get(orderId)).thenReturn(new OrderClient.InternalOrder(orderId, "ERA-261114-ABCDEF", OWNER,
                 "PENDING_PAYMENT", "ONLINE", "PENDING", 154_900, "INR", "Asha", "asha@example.com", "9876543210",
                 Instant.now().plusSeconds(600)));
         when(orders.paymentCaptured(eq(orderId), anyString(), anyLong(), anyString()))
-                .thenReturn(new OrderClient.OrderRef(orderId, "AUR-261114-ABCDEF", "CONFIRMED"));
+                .thenReturn(new OrderClient.OrderRef(orderId, "ERA-261114-ABCDEF", "CONFIRMED"));
     }
 
     @Test

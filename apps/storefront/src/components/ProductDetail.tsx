@@ -31,7 +31,7 @@ export function ProductDetail({ product, initialSku }: { product: Product; initi
   const [qty, setQty] = useState(1);
   const [bulkQty, setBulkQty] = useState(BULK_MIN);
   const v = product.variants[active] ?? product.variants[0]!;
-  const { add, pending } = useAddToCart();
+  const { add, pending, open } = useAddToCart();
   const { has, toggle } = useWishlist();
   const soldOut = v.inStock === false;
   const max = product.maxPerOrder ?? 5;
@@ -85,8 +85,8 @@ export function ProductDetail({ product, initialSku }: { product: Product; initi
 
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Stepper value={qty} min={1} max={max} onChange={setQty} label="Quantity" />
-          <button type="button" className="btn-primary flex-1 py-3.5" disabled={pending || soldOut} onClick={() => add(v.sku, qty)}>
-            {soldOut ? 'Sold out in this colour' : pending ? 'Adding…' : 'Add to bag'}
+          <button type="button" className="btn-primary flex-1 py-3.5" disabled={!open || pending || soldOut} onClick={() => add(v.sku, qty)}>
+            {!open ? 'Ordering opens soon' : soldOut ? 'Sold out in this colour' : pending ? 'Adding…' : 'Add to bag'}
           </button>
           <button type="button" onClick={() => toggle(product.slug)} aria-pressed={has(product.slug)}
             aria-label={has(product.slug) ? 'Remove from wishlist' : 'Save to wishlist'}
@@ -94,7 +94,7 @@ export function ProductDetail({ product, initialSku }: { product: Product; initi
             <HeartIcon filled={has(product.slug)} />
           </button>
         </div>
-        <p className="mt-2 text-xs text-muted">Up to {max} per order for retail. Stock is confirmed when you add to bag and again at checkout.</p>
+        <p className="mt-2 text-xs text-muted">{!open ? 'This is a catalogue preview — save this style to your wishlist and check back soon. ' : ''}Up to {max} per order for retail. Stock is confirmed when you add to bag and again at checkout.</p>
 
         {product.bulkEligible && product.bulkPricePaise ? (
           <section className="mt-8 rounded-[20px] border border-gold/50 bg-gradient-to-br from-white to-ivory-deep p-6" aria-labelledby="bulk-h">
@@ -104,7 +104,7 @@ export function ProductDetail({ product, initialSku }: { product: Product; initi
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Stepper value={bulkQty} min={1} max={500} onChange={setBulkQty} label="Bulk quantity" />
-              <button type="button" className="btn-outline flex-1" disabled={pending || soldOut} onClick={() => add(v.sku, bulkQty, 'BULK')}>
+              <button type="button" className="btn-outline flex-1" disabled={!open || pending || soldOut} onClick={() => add(v.sku, bulkQty, 'BULK')}>
                 Add {bulkQty} to bulk order
               </button>
             </div>
@@ -138,8 +138,8 @@ export function ProductDetail({ product, initialSku }: { product: Product; initi
           <p className="truncate text-sm font-semibold">{product.name}</p>
           <p className="text-sm text-plum">{formatPaise(product.pricePaise)} · {v.colorName}</p>
         </div>
-        <button type="button" className="btn-primary px-5" disabled={pending || soldOut} onClick={() => add(v.sku, qty)}>
-          {soldOut ? 'Sold out' : 'Add to bag'}
+        <button type="button" className="btn-primary px-5" disabled={!open || pending || soldOut} onClick={() => add(v.sku, qty)}>
+          {!open ? 'Opening soon' : soldOut ? 'Sold out' : 'Add to bag'}
         </button>
       </div>
     </div>

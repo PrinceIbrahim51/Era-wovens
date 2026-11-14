@@ -9,7 +9,7 @@ export default function MyOrdersPage() {
   const [orders, setOrders] = useState<OrderSummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
-    document.title = 'My orders · Aurelia';
+    document.title = 'My orders · Era Wovens';
     api<OrderSummary[]>('/api/v1/me/orders').then(setOrders).catch((e) => setError(e instanceof ApiError ? e.message : 'Could not load orders.'));
   }, []);
   return (

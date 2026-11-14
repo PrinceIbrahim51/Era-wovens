@@ -6,7 +6,7 @@ test('browse, filter and open a product @mobile', async ({ page }) => {
   await page.goto('/collections/handloom-cottons');
   await expect(page.getByRole('heading', { level: 1, name: 'Handloom Cottons' })).toBeVisible();
   await page.goto('/collections/handloom-cottons?color=blue');
-  await expect(page.getByText(/\d+ styles?/)).toBeVisible();
+  await expect(page.getByText(/\d+ styles?/).first()).toBeVisible();
   await page.getByRole('link', { name: 'Kora Check Handloom Cotton' }).first().click();
   await expect(page.getByRole('heading', { level: 1, name: 'Kora Check Handloom Cotton' })).toBeVisible();
   await expect(page.getByText('Inclusive of GST. Shipping calculated at checkout.')).toBeVisible();
@@ -17,7 +17,7 @@ test('search finds by colour and handles no results', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /Results for/ })).toBeVisible();
   await expect(page.locator('article').first()).toBeVisible();
   await page.goto('/search?q=zzzznotathing');
-  await expect(page.getByText('No styles match these filters')).toBeVisible();
+  await expect(page.getByText('No styles match these filters').first()).toBeVisible();
 });
 
 test('guest COD checkout places exactly one confirmed order', async ({ page }) => {
@@ -32,7 +32,8 @@ test('guest COD checkout places exactly one confirmed order', async ({ page }) =
 
   await page.getByLabel('Full name').fill('Asha Rao');
   await page.getByLabel('Email', { exact: true }).fill('asha.e2e@example.com');
-  await page.getByLabel('Mobile number').fill('9876543210');
+  // Unique number per run: COD limits pending orders per phone (by design).
+  await page.getByLabel('Mobile number').fill(`9${String(Date.now()).slice(-9)}`);
   await page.getByLabel('House / flat and street').fill('12 MG Road');
   await page.getByLabel('City').fill('Bengaluru');
   await page.getByLabel('State / UT').selectOption('Karnataka');
@@ -48,13 +49,13 @@ test('guest COD checkout places exactly one confirmed order', async ({ page }) =
   await page.getByRole('button', { name: 'Place COD order' }).click();
 
   await expect(page.getByRole('heading', { name: 'Your order is confirmed' })).toBeVisible({ timeout: 20_000 });
-  await expect(page.getByText(/AUR-\d{6}-[A-Z0-9]{6}/).first()).toBeVisible();
+  await expect(page.getByText(/ERA-\d{6}-[A-Z0-9]{6}/).first()).toBeVisible();
   await expect(page.getByText('Cash on delivery accepted')).toBeVisible();
 
   await page.goto('/cart');
   await expect(page.getByText('Your bag is empty')).toBeVisible();
   await page.goto('/orders');
-  await expect(page.getByText(/AUR-\d{6}-[A-Z0-9]{6}/).first()).toBeVisible();
+  await expect(page.getByText(/ERA-\d{6}-[A-Z0-9]{6}/).first()).toBeVisible();
 });
 
 test('bulk bag enforces the 10-piece minimum', async ({ page }) => {
@@ -75,7 +76,7 @@ test('invalid PIN code and unknown pages show helpful states', async ({ page }) 
   await page.goto('/products/does-not-exist');
   await expect(page.getByRole('heading', { name: 'We couldn’t find that page' })).toBeVisible();
   await page.goto('/track');
-  await page.getByLabel('Order number').fill('AUR-000000-AAAAAA');
+  await page.getByLabel('Order number').fill('ERA-000000-AAAAAA');
   await page.getByLabel('Email').fill('nobody@example.com');
   await page.getByRole('button', { name: 'Track order' }).click();
   await expect(page.getByText('We couldn’t find an order with those details.')).toBeVisible();

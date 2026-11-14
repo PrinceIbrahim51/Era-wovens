@@ -13,7 +13,11 @@ const CartCtx = createContext<{ summary: CartSummary; refresh: () => void }>({ s
 export const useCartSummary = () => useContext(CartCtx);
 
 // ---------------------------------------------------------------- wishlist (device-local convenience only)
-const WISHLIST_KEY = 'aurelia.wishlist.v1';
+// ---------------------------------------------------------------- ordering availability (catalogue preview)
+const OrderingCtx = createContext(true);
+export const useOrderingOpen = () => useContext(OrderingCtx);
+
+const WISHLIST_KEY = 'erawovens.wishlist.v1';
 const WishCtx = createContext<{ slugs: string[]; toggle: (slug: string) => void; has: (slug: string) => boolean }>({
   slugs: [], toggle: () => {}, has: () => false,
 });
@@ -29,7 +33,7 @@ function readWishlist(): string[] {
   }
 }
 
-export function Providers({ children }: { children: ReactNode }) {
+export function Providers({ children, orderingOpen = true }: { children: ReactNode; orderingOpen?: boolean }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const seq = useRef(0);
   const push = useCallback((t: Omit<Toast, 'id'>) => {
@@ -42,7 +46,7 @@ export function Providers({ children }: { children: ReactNode }) {
   const refresh = useCallback(() => {
     api<CartSummary>('/api/v1/cart/summary').then(setSummary).catch(() => {});
   }, []);
-  useEffect(() => { refresh(); }, [refresh]);
+  useEffect(() => { if (orderingOpen) refresh(); }, [refresh, orderingOpen]);
 
   const [slugs, setSlugs] = useState<string[]>([]);
   useEffect(() => { setSlugs(readWishlist()); }, []);
@@ -57,6 +61,7 @@ export function Providers({ children }: { children: ReactNode }) {
   const cart = useMemo(() => ({ summary, refresh }), [summary, refresh]);
 
   return (
+    <OrderingCtx.Provider value={orderingOpen}>
     <ToastCtx.Provider value={push}>
       <CartCtx.Provider value={cart}>
         <WishCtx.Provider value={wish}>
@@ -74,5 +79,6 @@ export function Providers({ children }: { children: ReactNode }) {
         </WishCtx.Provider>
       </CartCtx.Provider>
     </ToastCtx.Provider>
+    </OrderingCtx.Provider>
   );
 }

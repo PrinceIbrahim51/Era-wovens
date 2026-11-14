@@ -66,7 +66,7 @@ public class OrderService {
         validateSnapshot(c);
         for (int attempt = 0; attempt < 5; attempt++) {
             UUID id = UUID.randomUUID();
-            String number = "AUR-" + DAY.format(Instant.now()) + "-" + randomCode(6);
+            String number = "ERA-" + DAY.format(Instant.now()) + "-" + randomCode(6);
             if (repo.numberExists(number)) continue;
             var row = new OrderRow(id, number, c.ownerHash(), c.cartType(), c.paymentMethod(), OrderStatus.DRAFT,
                     PaymentStatus.NOT_STARTED, c.contact().fullName(), c.contact().email(), c.contact().phone(),

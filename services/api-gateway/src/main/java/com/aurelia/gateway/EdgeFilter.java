@@ -38,7 +38,7 @@ import reactor.core.publisher.Mono;
  */
 @Component
 public class EdgeFilter implements GlobalFilter, Ordered {
-    public static final String COOKIE = "aurelia_sid";
+    public static final String COOKIE = "ew_sid";
     static final String INTERNAL = "X-Internal-Token";
     static final String GUEST = "X-Guest-Session";
     static final String REQUEST_ID = "X-Request-Id";

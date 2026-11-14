@@ -1,4 +1,4 @@
-# Aurelia — Ethnic Fashion E-Commerce (preview)
+# Era Wovens — Ethnic Fashion E-Commerce (preview)
 
 > **Status: M0–M3 working slice, not production-ready.** The storefront, catalogue, cart, bulk orders, checkout, COD and a Razorpay **Test Mode** payment flow run end-to-end locally. Accounts/admin are not built yet (see [Known limitations](#known-limitations)). The payment service **refuses to start with live keys**. The full original specification is kept in [`docs/SPECIFICATION.md`](docs/SPECIFICATION.md).
 

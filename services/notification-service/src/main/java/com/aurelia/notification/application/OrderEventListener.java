@@ -53,7 +53,7 @@ public class OrderEventListener {
         String total = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("en-IN"))
                 .format(e.path("totalPaise").asLong() / 100.0);
         var tpl = switch (type) {
-            case "order.confirmed" -> new String[]{"order-confirmed", "Your Aurelia order " + number + " is confirmed",
+            case "order.confirmed" -> new String[]{"order-confirmed", "Your Era Wovens order " + number + " is confirmed",
                     "Hi " + name + ", thank you! Order " + number + " (" + total + ", "
                             + ("COD".equals(e.path("paymentMethod").asText()) ? "cash on delivery" : "paid online — test mode")
                             + ") is confirmed. We'll email you when it ships."};

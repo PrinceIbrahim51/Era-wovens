@@ -43,7 +43,7 @@ public class RazorpayClient {
     public ProviderOrder createOrder(long amountPaise, String currency, String receipt, String internalOrderId) {
         try {
             return client.post().uri("/v1/orders")
-                    .body(new CreateOrder(amountPaise, currency, receipt, Map.of("aurelia_order_id", internalOrderId)))
+                    .body(new CreateOrder(amountPaise, currency, receipt, Map.of("era_wovens_order_id", internalOrderId)))
                     .retrieve().body(ProviderOrder.class);
         } catch (RestClientException e) {
             throw new UpstreamException("razorpay create order failed", e);

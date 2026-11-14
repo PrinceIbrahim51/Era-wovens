@@ -1,13 +1,14 @@
 import type { NextConfig } from 'next';
 
-const gateway = process.env.GATEWAY_URL ?? 'http://localhost:8080';
+const gateway = process.env.GATEWAY_URL;
 
 const config: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   // The browser talks to same-origin /api/v1/*; Next proxies to the gateway, keeping the guest cookie first-party.
+  // Without GATEWAY_URL the site runs in catalogue preview mode (see src/lib/mode.ts).
   async rewrites() {
-    return [{ source: '/api/v1/:path*', destination: `${gateway}/api/v1/:path*` }];
+    return gateway ? { beforeFiles: [{ source: '/api/v1/:path*', destination: `${gateway}/api/v1/:path*` }], afterFiles: [], fallback: [] } : [];
   },
   async headers() {
     return [{

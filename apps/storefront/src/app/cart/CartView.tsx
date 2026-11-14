@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { ProductArt } from '@/components/ProductArt';
-import { useCartSummary, useToast } from '@/components/Providers';
+import { useCartSummary, useOrderingOpen, useToast } from '@/components/Providers';
 import { api, ApiError } from '@/lib/api';
 import { formatPaise } from '@/lib/format';
 import { LINE_ISSUES } from '@/lib/messages';
@@ -18,12 +18,15 @@ export function CartView() {
   const [busy, setBusy] = useState<string | null>(null);
   const toast = useToast();
   const { summary, refresh } = useCartSummary();
+  const open = useOrderingOpen();
 
   const load = useCallback(() => {
     setError(null);
     api<Cart>(`/api/v1/cart?type=${type}`).then(setCart).catch((e) => setError(e instanceof ApiError ? e.message : 'Could not load your bag.'));
   }, [type]);
-  useEffect(() => { setCart(null); load(); }, [load]);
+  useEffect(() => { if (open) { setCart(null); load(); } }, [load, open]);
+
+  if (!open) return <OrderingNotOpen />;
 
   async function mutate(line: CartLine, quantity: number | null) {
     setBusy(line.itemId);
@@ -144,4 +147,15 @@ function qtyOptions(l: CartLine, type: CartType): number[] {
   if (max <= 30) return Array.from({ length: max }, (_, i) => i + 1);
   const steps = new Set<number>([...Array.from({ length: 30 }, (_, i) => i + 1), 40, 50, 75, 100, 150, 200, 300, 400, 500, l.quantity]);
   return [...steps].filter((n) => n <= max).sort((a, b) => a - b);
+}
+
+export function OrderingNotOpen() {
+  return (
+    <div className="card mx-auto max-w-xl px-8 py-16 text-center">
+      <p className="eyebrow">Catalogue preview</p>
+      <h1 className="mt-3 font-display text-4xl text-plum">Ordering opens soon</h1>
+      <p className="mt-3 text-muted">Browse the collection and save your favourites to your wishlist — they’ll be waiting when our store opens.</p>
+      <div className="mt-8 flex justify-center gap-3"><Link href="/collections/all" className="btn-primary">Browse sarees</Link><Link href="/wishlist" className="btn-outline">Wishlist</Link></div>
+    </div>
+  );
 }

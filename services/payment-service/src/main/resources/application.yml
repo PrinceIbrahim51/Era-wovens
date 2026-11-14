@@ -42,4 +42,4 @@ payments:
     key-secret: ${RAZORPAY_KEY_SECRET:}
     webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
     api-base-url: ${RAZORPAY_API_BASE_URL:https://api.razorpay.com}
-    merchant-name: Aurelia (Test Mode)
+    merchant-name: Era Wovens (Test Mode)

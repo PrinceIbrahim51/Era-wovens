@@ -42,14 +42,14 @@ class OrderEventListenerIntegrationTest {
     @Test
     void duplicateDeliveriesSendOneEmail() {
         String id = UUID.randomUUID().toString();
-        String body = "{\"orderNumber\":\"AUR-261114-ABCDEF\",\"contactName\":\"Asha\",\"contactEmail\":\"asha@example.com\",\"totalPaise\":154900,\"paymentMethod\":\"COD\"}";
+        String body = "{\"orderNumber\":\"ERA-261114-ABCDEF\",\"contactName\":\"Asha\",\"contactEmail\":\"asha@example.com\",\"totalPaise\":154900,\"paymentMethod\":\"COD\"}";
         for (int i = 0; i < 3; i++) {
             var msg = MessageBuilder.withBody(body.getBytes(StandardCharsets.UTF_8))
                     .setMessageId(id).setType("order.confirmed").setContentType("application/json").build();
             template.send("aurelia.orders", "order.confirmed", msg);
         }
         await().atMost(Duration.ofSeconds(10)).untilAsserted(() ->
-                verify(email, times(1)).send(eq("asha@example.com"), contains("AUR-261114-ABCDEF"), anyString()));
+                verify(email, times(1)).send(eq("asha@example.com"), contains("ERA-261114-ABCDEF"), anyString()));
         Integer logged = jdbc.sql("SELECT count(*) FROM notification_log WHERE message_id = :id").param("id", id)
                 .query(Integer.class).single();
         assertThat(logged).isEqualTo(1);

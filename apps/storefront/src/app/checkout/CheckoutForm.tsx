@@ -2,7 +2,8 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useCartSummary, useToast } from '@/components/Providers';
+import { useCartSummary, useOrderingOpen, useToast } from '@/components/Providers';
+import { OrderingNotOpen } from '@/app/cart/CartView';
 import { api, ApiError } from '@/lib/api';
 import { formatPaise } from '@/lib/format';
 import { COD_REASONS } from '@/lib/messages';
@@ -34,6 +35,10 @@ const SERVER_FIELD: Record<string, keyof Form> = {
 };
 
 export function CheckoutForm() {
+  return useOrderingOpen() ? <CheckoutFormInner /> : <OrderingNotOpen />;
+}
+
+function CheckoutFormInner() {
   const params = useSearchParams();
   const router = useRouter();
   const toast = useToast();

@@ -72,7 +72,7 @@ export function ProductCard({ product, bulkContext = false }: { product: Product
 function QuickView({ product, initial, bulkContext, ref }: { product: Product; initial: number; bulkContext: boolean; ref: React.Ref<HTMLDialogElement> }) {
   const [active, setActive] = useState(initial);
   const v = product.variants[active] ?? product.variants[0]!;
-  const { add, pending } = useAddToCart();
+  const { add, pending, open } = useAddToCart();
   const bulk = bulkContext && product.bulkEligible;
   const qty = bulk ? 10 : 1;
   return (
@@ -102,9 +102,9 @@ function QuickView({ product, initial, bulkContext, ref }: { product: Product; i
             </div>
           </fieldset>
           <div className="mt-auto flex flex-col gap-3 pt-8">
-            <button type="button" className="btn-primary" disabled={pending || v.inStock === false}
+            <button type="button" className="btn-primary" disabled={!open || pending || v.inStock === false}
               onClick={async () => { if (await add(v.sku, qty, bulk ? 'BULK' : 'REGULAR')) (ref as React.RefObject<HTMLDialogElement>)?.current?.close(); }}>
-              {v.inStock === false ? 'Sold out in this colour' : pending ? 'Adding…' : bulk ? `Add ${qty} to bulk order` : 'Add to bag'}
+              {!open ? 'Ordering opens soon' : v.inStock === false ? 'Sold out in this colour' : pending ? 'Adding…' : bulk ? `Add ${qty} to bulk order` : 'Add to bag'}
             </button>
             <Link href={`/products/${product.slug}`} className="btn-outline">View full details</Link>
           </div>

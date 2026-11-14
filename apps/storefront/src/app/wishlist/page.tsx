@@ -9,7 +9,7 @@ import type { Product } from '@/lib/types';
 export default function WishlistPage() {
   const { slugs } = useWishlist();
   const [products, setProducts] = useState<Product[] | null>(null);
-  useEffect(() => { document.title = 'Wishlist · Aurelia'; }, []);
+  useEffect(() => { document.title = 'Wishlist · Era Wovens'; }, []);
   useEffect(() => {
     if (!slugs.length) { setProducts([]); return; }
     api<Product[]>(`/api/v1/catalog/products/batch?slugs=${encodeURIComponent(slugs.join(','))}`)

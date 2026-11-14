@@ -37,6 +37,7 @@ data.products.forEach((p) => p.variants.forEach((v, i) => {
 }));
 
 const out = [
+  ['apps/storefront/src/data/catalog.json', JSON.stringify(data, null, 2) + '\n'],
   ['services/catalog-service/src/main/resources/db/migration/V2__seed_catalog.sql', catalog],
   ['services/inventory-service/src/main/resources/db/migration/V2__seed_stock.sql', inventory],
 ];
